@@ -4,6 +4,8 @@ import diminvo.Diminvo;
 import diminvo.common.inventory.DiminvoContainer;
 import diminvo.common.item.LockItem;
 import diminvo.common.network.UnLockMessage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.ClickType;
@@ -54,6 +56,10 @@ public class DiminvoGuiContainer extends GuiContainer
         super.handleMouseClick(slotIn, slotId, mouseButton, type);
         if (slotIn !=null && LockItem.isLock(slotIn.getStack().getItem(),LockItem.UN_LOCK_ITEM)){
             Diminvo.NETWORK.sendToServer(new UnLockMessage());
+            EntityPlayerSP player= Minecraft.getMinecraft().player;
+            if (player.experienceLevel>=10 && !player.isCreative()){
+                player.experienceLevel-=10;
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ import java.util.List;
  * @create: 2020-02-16 04:39
  **/
 public class DiminvoInventory implements IInventory {
-    private String inventoryTitle= "dim.inv.diminv";
+    private String inventoryTitle= new TextComponentTranslation("diminvo.invo.diminvo",new Object[0]).getUnformattedComponentText();
     private final int slotsCount=54;
     private final NonNullList<ItemStack> inventoryContents;
     /** Listeners notified when any item in this inventory is changed. */

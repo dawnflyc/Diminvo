@@ -2,9 +2,17 @@ package diminvo.common.item;
 
 import diminvo.Diminvo;
 import diminvo.common.event.EventHandler;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * @program: DimensionInventory
@@ -20,7 +28,7 @@ public class LockItem extends Item {
 
     public LockItem(String id) {
         this.setRegistryName(Diminvo.MODID,id);
-        this.setUnlocalizedName(id);
+        this.setUnlocalizedName(Diminvo.MODID+":"+id);
         EventHandler.ITEMS.put(id,this);
         this.setMaxStackSize(1);
     }
@@ -42,5 +50,12 @@ public class LockItem extends Item {
             return false;
         }
         return item0.getRegistryName().getResourcePath().equals(item1.getRegistryName().getResourcePath());
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        if (this.isLock(this,UN_LOCK_ITEM))
+        tooltip.add(new TextComponentTranslation("diminvo.item.info",new boolean[0]).getUnformattedComponentText());
     }
 }

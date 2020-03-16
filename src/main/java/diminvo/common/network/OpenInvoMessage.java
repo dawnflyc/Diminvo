@@ -1,8 +1,11 @@
 package diminvo.common.network;
 
+import diminvo.Diminvo;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
  * @program: DimensionInventory
@@ -42,5 +45,17 @@ public class OpenInvoMessage implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(this.guiId);
         buf.writeLong(pos.toLong());
+    }
+    /**
+     * 按c进入gui
+     */
+    public static class OpenInvo implements IMessageHandler<OpenInvoMessage, IMessage> {
+
+        @Override
+        public IMessage onMessage(OpenInvoMessage message, MessageContext ctx) {
+            BlockPos pos=message.getPos();
+            ctx.getServerHandler().player.openGui(Diminvo.instance,message.getGuiId(),ctx.getServerHandler().player.world,pos.getX(),pos.getY(),pos.getZ());
+            return null;
+        }
     }
 }
