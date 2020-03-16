@@ -10,16 +10,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
  * @author: xiaofei
  * @create: 2020-02-26 22:02
  **/
-public class DiminvoMessage implements IMessage {
+public class OpenInvoMessage implements IMessage {
 
     private int guiId;
 
     private BlockPos pos;
 
-    public DiminvoMessage() {
+    public OpenInvoMessage() {
     }
 
-    public DiminvoMessage(String guiId, BlockPos pos) {
+    public OpenInvoMessage(String guiId, BlockPos pos) {
         this.guiId = GuiHandler.getGuiId(guiId);
         this.pos = pos;
     }

@@ -1,6 +1,5 @@
 package diminvo.common.inventory;
 
-import diminvo.common.capability.DimInvoProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -54,41 +53,82 @@ public class DiminvoContainer extends Container {
         return this.chestInventory.isUsableByPlayer(playerIn);
     }
 
-    @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
-        if (slot != null && slot.getHasStack())
-        {
-            ItemStack itemstack1 = slot.getStack();
-            itemstack = itemstack1.copy();
+//    @Override
+//    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+//        ItemStack itemstack = ItemStack.EMPTY;
+//        Slot slot = this.inventorySlots.get(index);
+//        if (slot != null && slot.getHasStack())
+//        {
+//            ItemStack itemstack1 = slot.getStack();
+//            itemstack = itemstack1.copy();
+//
+//            int maxSlot=playerIn.getCapability(DimInvoProvider.DIMINV,null).getUnLockIndex();
+//            if (index < maxSlot)
+//            {
+//                if (!this.mergeItemStack(itemstack1, maxSlot, this.inventorySlots.size(), true))
+//                {
+//                    return ItemStack.EMPTY;
+//                }
+//            }
+//            else if (!this.mergeItemStack(itemstack1, 0, maxSlot, false))
+//            {
+//                return ItemStack.EMPTY;
+//            }
+//
+//            if (itemstack1.isEmpty())
+//            {
+//                slot.putStack(ItemStack.EMPTY);
+//            }
+//            else
+//            {
+//                slot.onSlotChanged();
+//            }
+//        }
+//
+//        return itemstack;
+//    }
 
-            int maxSlot=playerIn.getCapability(DimInvoProvider.DIMINV,null).getUnLockIndex();
-            if (index < maxSlot)
-            {
-                if (!this.mergeItemStack(itemstack1, maxSlot, this.inventorySlots.size(), true))
-                {
-                    return ItemStack.EMPTY;
-                }
-            }
-            else if (!this.mergeItemStack(itemstack1, 0, maxSlot, false))
+//    @Override
+//    protected boolean mergeItemStack(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
+//        if (LockItem.isLock(stack.getItem())){
+//            return false;
+//        }
+//        return super.mergeItemStack(stack, startIndex, endIndex, reverseDirection);
+//    }
+public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
+{
+    ItemStack itemstack = ItemStack.EMPTY;
+    Slot slot = this.inventorySlots.get(index);
+
+    if (slot != null && slot.getHasStack())
+    {
+        ItemStack itemstack1 = slot.getStack();
+        itemstack = itemstack1.copy();
+
+        if (index < 6 * 9)
+        {
+            if (!this.mergeItemStack(itemstack1, 6 * 9, this.inventorySlots.size(), true))
             {
                 return ItemStack.EMPTY;
             }
-
-            if (itemstack1.isEmpty())
-            {
-                slot.putStack(ItemStack.EMPTY);
-            }
-            else
-            {
-                slot.onSlotChanged();
-            }
+        }
+        else if (!this.mergeItemStack(itemstack1, 0, 6 * 9, false))
+        {
+            return ItemStack.EMPTY;
         }
 
-        return itemstack;
+        if (itemstack1.isEmpty())
+        {
+            slot.putStack(ItemStack.EMPTY);
+        }
+        else
+        {
+            slot.onSlotChanged();
+        }
     }
 
+    return itemstack;
+}
 
 
 }

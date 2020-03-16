@@ -30,11 +30,8 @@ public class EventHandler {
 
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event){
-        if (event.getEntity() instanceof EntityPlayer){
-            EntityPlayer player=(EntityPlayer)event.getEntity();
-            if (player.getCapability(DimInvoProvider.DIMINV,null)==null || player.getCapability(DimInvoProvider.DIMINV,null).getInventory()==null ){
-                player.getCapability(DimInvoProvider.DIMINV,null).initialize();
-            }
+        if (event.getEntity() instanceof EntityPlayer) {
+            initialize((EntityPlayer) event.getEntity());
         }
     }
     public static final Map<String,Item> ITEMS=new HashMap<>();
@@ -48,17 +45,27 @@ public class EventHandler {
     }
     @SubscribeEvent
     public void onPlayerClone(PlayerEvent.Clone event){
-        IDimInvo dimInvo=event.getOriginal().getCapability(DimInvoProvider.DIMINV,null);
-        String unLockId= LockItem.UN_LOCK_ITEM.getRegistryName().getResourcePath();
-        String lockId=LockItem.LOCK_ITEM.getRegistryName().getResourcePath();
-        World world=event.getOriginal().getEntityWorld();
-        BlockPos pos=event.getOriginal().getPosition();
-        for (ItemStack itemStack : dimInvo.getInventory()) {
-            String itemstackId=itemStack.getItem().getRegistryName().getResourcePath();
-            if (!itemstackId.equals(unLockId) && !itemstackId.equals(lockId) && !itemStack.isEmpty()){
+        IDimInvo originalDimInvo=event.getOriginal().getCapability(DimInvoProvider.DIMINV,null);
+
+        if (event.getOriginal().getEntityWorld().getGameRules().getBoolean("keepInventory")){
+            initialize(event.getEntityPlayer());
+            IDimInvo dimInvo= event.getEntityPlayer().getCapability(DimInvoProvider.DIMINV,null);
+            dimInvo.setUnLockIndex(originalDimInvo.getUnLockIndex());
+            dimInvo.setInventory(originalDimInvo.getInventory());
+            return;
+        }
+        for (ItemStack itemStack : originalDimInvo.getInventory()) {
+            if (!LockItem.isLock(itemStack.getItem())){
+                World world=event.getOriginal().getEntityWorld();
+                BlockPos pos=event.getOriginal().getPosition();
                 world.spawnEntity(new EntityItem(world,pos.getX(),pos.getY(),pos.getZ(),itemStack));
             }
         }
     }
 
+    public void initialize(EntityPlayer player){
+            if (player.getCapability(DimInvoProvider.DIMINV,null)==null || player.getCapability(DimInvoProvider.DIMINV,null).getInventory()==null ){
+                player.getCapability(DimInvoProvider.DIMINV,null).initialize();
+            }
+    }
 }

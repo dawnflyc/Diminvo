@@ -1,9 +1,14 @@
 package diminvo.client.gui;
 
+import diminvo.Diminvo;
 import diminvo.common.inventory.DiminvoContainer;
+import diminvo.common.item.LockItem;
+import diminvo.common.network.UnLockMessage;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,4 +49,11 @@ public class DiminvoGuiContainer extends GuiContainer
         this.fontRenderer.drawString(((DiminvoContainer)(this.inventorySlots)).getChestInventory().getName(), 8, 6, 0x404040);
     }
 
+    @Override
+    protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
+        super.handleMouseClick(slotIn, slotId, mouseButton, type);
+        if (slotIn !=null && LockItem.isLock(slotIn.getStack().getItem(),LockItem.UN_LOCK_ITEM)){
+            Diminvo.NETWORK.sendToServer(new UnLockMessage());
+        }
+    }
 }

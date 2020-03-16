@@ -9,10 +9,9 @@ import diminvo.common.capability.IDimInvo;
 import diminvo.common.event.EventHandler;
 import diminvo.common.inventory.DiminvoContainer;
 import diminvo.common.item.LockItem;
-import diminvo.common.network.DiminvoHandler;
-import diminvo.common.network.DiminvoMessage;
 import diminvo.common.network.GuiHandler;
 import diminvo.common.network.IGuiElement;
+import diminvo.common.network.NetWorkHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,7 +20,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.concurrent.Callable;
 
@@ -50,7 +48,8 @@ public class CommonProxy {
             }
         });
         //gui-diminv
-        Diminvo.NETWORK.registerMessage(DiminvoHandler.class, DiminvoMessage.class, 0, Side.SERVER);
+        NetWorkHandler.initialize();
+
         GuiHandler.registry("diminv", new IGuiElement() {
 
 

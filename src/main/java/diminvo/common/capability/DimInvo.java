@@ -36,8 +36,13 @@ public class DimInvo implements IDimInvo {
         return unLockIndex;
     }
 
-    public void setUnLockIndex(int unLockIndex) {
-        this.unLockIndex = unLockIndex;
+    public boolean setUnLockIndex(int unLockIndex) {
+        if (unLockIndex<inventory.size()) {
+            this.unLockIndex = unLockIndex;
+            format();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -56,28 +61,34 @@ public class DimInvo implements IDimInvo {
            }else if (i>unLockIndex){
                inventory.set(i,new ItemStack(LockItem.LOCK_ITEM));
            }else {
-               String itemId=inventory.get(i).getItem().getRegistryName().getResourcePath();
-               String unLockId=LockItem.UN_LOCK_ITEM.getRegistryName().getResourcePath();
-               String lockId=LockItem.LOCK_ITEM.getRegistryName().getResourcePath();
-               if (unLockId.equals(itemId) || lockId.equals(itemId)){
+               if (LockItem.isLock(this.inventory.get(i).getItem())){
                    inventory.set(i,ItemStack.EMPTY);
                }
            }
         }
     }
 
+    @Override
+    public boolean unNext() {
+        return setUnLockIndex(getUnLockIndex()+1);
+    }
 
 
     @Override
     public NBTBase writeNBT(Capability<IDimInvo> capability, EnumFacing side) {
-        return ItemStackHelper.saveAllItems(new NBTTagCompound(),this.inventory);
+        NBTTagCompound nbtTagCompound = new NBTTagCompound();
+        nbtTagCompound.setInteger("unLockIndex",this.unLockIndex);
+        nbtTagCompound.setTag("inventory",ItemStackHelper.saveAllItems(new NBTTagCompound(),this.inventory));
+        return nbtTagCompound;
     }
 
 
     @Override
     public void readNBT(Capability<IDimInvo> capability, EnumFacing side, NBTBase nbt) {
         initialize();
-        ItemStackHelper.loadAllItems((NBTTagCompound) nbt,this.inventory);
-
+        NBTTagCompound nbtTagCompound= (NBTTagCompound) nbt;
+        this.setUnLockIndex(nbtTagCompound.getInteger("unLockIndex"));
+        ItemStackHelper.loadAllItems(nbtTagCompound.getCompoundTag("inventory"),this.inventory);
+        format();
     }
 }

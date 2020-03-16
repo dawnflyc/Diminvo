@@ -17,10 +17,12 @@ public interface IDimInvo extends NBTSerializable<IDimInvo> {
 
     int getUnLockIndex();
 
-    void setUnLockIndex(int unLockIndex);
+    boolean setUnLockIndex(int unLockIndex);
 
     NonNullList<ItemStack> initialize();
 
     void format();
+
+    boolean unNext();
 
 }
