@@ -37,7 +37,7 @@ public class DimInvo implements IDimInvo {
     }
 
     public boolean setUnLockIndex(int unLockIndex) {
-        if (unLockIndex<inventory.size()) {
+        if (unLockIndex<=inventory.size()) {
             this.unLockIndex = unLockIndex;
             format();
             return true;

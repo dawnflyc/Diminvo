@@ -87,5 +87,4 @@ public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
     return itemstack;
 }
 
-
 }

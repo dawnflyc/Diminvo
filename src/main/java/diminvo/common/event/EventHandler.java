@@ -31,7 +31,10 @@ public class EventHandler {
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event){
         if (event.getEntity() instanceof EntityPlayer) {
-            initialize((EntityPlayer) event.getEntity());
+            IDimInvo dimInvo= ((EntityPlayer)event.getEntity()).getCapability(DimInvoProvider.DIMINV,null);
+            if (dimInvo.getInventory() ==null){
+                dimInvo.initialize();
+            }
         }
     }
     public static final Map<String,Item> ITEMS=new HashMap<>();
@@ -46,14 +49,15 @@ public class EventHandler {
     @SubscribeEvent
     public void onPlayerClone(PlayerEvent.Clone event){
         IDimInvo originalDimInvo=event.getOriginal().getCapability(DimInvoProvider.DIMINV,null);
-
+        IDimInvo dimInvo= event.getEntityPlayer().getCapability(DimInvoProvider.DIMINV,null);
         if (event.getOriginal().getEntityWorld().getGameRules().getBoolean("keepInventory")){
-            initialize(event.getEntityPlayer());
-            IDimInvo dimInvo= event.getEntityPlayer().getCapability(DimInvoProvider.DIMINV,null);
+            dimInvo.initialize();
             dimInvo.setUnLockIndex(originalDimInvo.getUnLockIndex());
             dimInvo.setInventory(originalDimInvo.getInventory());
             return;
         }
+        dimInvo.initialize();
+        dimInvo.setUnLockIndex(originalDimInvo.getUnLockIndex());
         for (ItemStack itemStack : originalDimInvo.getInventory()) {
             if (!LockItem.isLock(itemStack.getItem())){
                 World world=event.getOriginal().getEntityWorld();
@@ -63,9 +67,4 @@ public class EventHandler {
         }
     }
 
-    public void initialize(EntityPlayer player){
-            if (player.getCapability(DimInvoProvider.DIMINV,null)==null || player.getCapability(DimInvoProvider.DIMINV,null).getInventory()==null ){
-                player.getCapability(DimInvoProvider.DIMINV,null).initialize();
-            }
-    }
 }

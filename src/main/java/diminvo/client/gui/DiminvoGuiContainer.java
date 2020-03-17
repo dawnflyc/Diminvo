@@ -53,13 +53,28 @@ public class DiminvoGuiContainer extends GuiContainer
 
     @Override
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
-        super.handleMouseClick(slotIn, slotId, mouseButton, type);
         if (slotIn !=null && LockItem.isLock(slotIn.getStack().getItem(),LockItem.UN_LOCK_ITEM)){
-            Diminvo.NETWORK.sendToServer(new UnLockMessage());
-            EntityPlayerSP player= Minecraft.getMinecraft().player;
-            if (player.experienceLevel>=10 && !player.isCreative()){
-                player.experienceLevel-=10;
+            if (type==ClickType.PICKUP){
+                singleUnLock();
+            }else if (type==ClickType.QUICK_MOVE){
+                allUnLock();
             }
         }
+        super.handleMouseClick(slotIn, slotId, mouseButton, type);
+    }
+
+    private void singleUnLock(){
+        EntityPlayerSP player= Minecraft.getMinecraft().player;
+        if (player.experienceLevel<10 && !player.isCreative()) return;
+        Diminvo.NETWORK.sendToServer(new UnLockMessage(UnLockMessage.UnLockMode.single));
+        if (player.experienceLevel>=10 && !player.isCreative()){
+            player.experienceLevel-=10;
+        }
+    }
+
+    public void allUnLock(){
+        EntityPlayerSP player= Minecraft.getMinecraft().player;
+        if (player.experienceLevel<10 && !player.isCreative()) return;
+        Diminvo.NETWORK.sendToServer(new UnLockMessage(UnLockMessage.UnLockMode.all));
     }
 }
