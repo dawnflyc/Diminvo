@@ -27,6 +27,10 @@ public class GuiHandler implements IGuiHandler {
     public static int getGuiId(String id){
         return E_ID.get(id);
     }
+
+    public static IGuiElement getGuiElement(String id){
+        return ELEMENTS.get(E_ID.get(id));
+    }
     @Nullable
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {

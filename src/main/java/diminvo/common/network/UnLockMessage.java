@@ -2,8 +2,10 @@ package diminvo.common.network;
 
 import diminvo.common.capability.DimInvoProvider;
 import diminvo.common.capability.IDimInvo;
+import diminvo.common.inventory.DiminvoContainer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -41,17 +43,22 @@ public class UnLockMessage implements IMessage {
 
         @Override
         public IMessage onMessage(UnLockMessage message, MessageContext ctx) {
+            IMessage returnMessage=null;
             IDimInvo dimInvo= ctx.getServerHandler().player.getCapability(DimInvoProvider.DIMINV,null);
             if (dimInvo!=null && dimInvo.getInventory() !=null){
                 if (message.getMode()==UnLockMode.single){
                     single(ctx,dimInvo);
-                    return null;
                 }else {
                     int levelCount= all(ctx,dimInvo);
-                    return new returnMessage(levelCount);
+                    returnMessage= new returnMessage(levelCount);
                 }
+                EntityPlayerMP player= ctx.getServerHandler().player;
+                if (player.openContainer!=null && player.openContainer instanceof DiminvoContainer){
+                    player.sendAllContents(player.openContainer,dimInvo.getInventory());
+                }
+
             }
-            return null;
+            return returnMessage;
         }
 
         private void single(MessageContext ctx,IDimInvo dimInvo){
